@@ -25,11 +25,11 @@ export function SidebarNav({ role, onNavigate }: SidebarNavProps) {
 
   return (
     <ScrollArea className="flex-1">
-      <nav className="space-y-6 p-4" aria-label="Navegação principal">
+      <nav className="space-y-7 px-3 py-6" aria-label="Navegação principal">
         {groups.map((group, i) => (
           <div key={group.label ?? i} className="space-y-1">
             {group.label && (
-              <p className="px-3 pb-1 text-xs font-medium text-muted-foreground">{group.label}</p>
+              <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#89938c]">{group.label}</p>
             )}
             {group.items.map(({ label, href, icon: Icon }) => {
               const active = isActive(href);
@@ -40,13 +40,13 @@ export function SidebarNav({ role, onNavigate }: SidebarNavProps) {
                   onClick={onNavigate}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    "group relative flex items-center gap-3 rounded-lg px-3 py-[9px] text-[13px] font-medium transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
                     active
-                      ? "bg-[#1d3f38] text-[#f2efe6]"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      ? "bg-[#e6eee8] text-[#173f35] before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:rounded-full before:bg-[#315f4e]"
+                      : "text-[#68756d] hover:bg-[#f0f3ef] hover:text-[#263b31]",
                   )}
                 >
-                  <Icon className="size-4 shrink-0" />
+                  <Icon className={cn("size-[17px] shrink-0 transition-colors", active ? "text-[#315f4e]" : "text-[#89958d] group-hover:text-[#52665a]")} strokeWidth={1.8} />
                   {label}
                 </Link>
               );
