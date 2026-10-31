@@ -82,9 +82,9 @@ export default async function AdminDashboardPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <Card>
+          <Card className="rounded-xl border-border/80 shadow-[0_1px_2px_rgba(24,48,38,0.035)]">
             <CardHeader>
-              <CardTitle className="text-base">Vínculos por matriz curricular</CardTitle>
+              <CardTitle className="text-[14px] font-semibold tracking-[-0.015em] text-[#263b31]">Vínculos por matriz curricular</CardTitle>
               <CardDescription>
                 Um aluno pode estar em mais de uma matriz, por isso a soma passa do total de alunos.
               </CardDescription>
@@ -104,7 +104,7 @@ export default async function AdminDashboardPage() {
                     aria-label={`${c.curriculum}: ${c.students} alunos`}
                   >
                     <div
-                      className="h-full rounded-full bg-[#1d3f38]"
+                      className="h-full rounded-full bg-[#315f4e]"
                       style={{ width: `${(c.students / maxLinks) * 100}%` }}
                     />
                   </div>
@@ -115,7 +115,7 @@ export default async function AdminDashboardPage() {
 
           <Card>
             <CardHeader className="flex-row items-center justify-between space-y-0">
-              <CardTitle className="text-base">Matrículas recentes</CardTitle>
+              <CardTitle className="text-[14px] font-semibold tracking-[-0.015em] text-[#263b31]">Matrículas recentes</CardTitle>
               <Button asChild variant="ghost" size="sm">
                 <Link href="/admin/matriculas">Ver todas</Link>
               </Button>
@@ -173,7 +173,7 @@ export default async function AdminDashboardPage() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <CalendarDays className="size-4 text-muted-foreground" />
-                <CardTitle className="text-base">Ano letivo {year.name}</CardTitle>
+                <CardTitle className="text-[14px] font-semibold tracking-[-0.015em] text-[#263b31]">Ano letivo {year.name}</CardTitle>
               </div>
               <CardDescription>
                 {year.startsAt} a {year.endsAt}
@@ -191,14 +191,14 @@ export default async function AdminDashboardPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">O que precisa de atenção</CardTitle>
+              <CardTitle className="text-[14px] font-semibold tracking-[-0.015em] text-[#263b31]">O que precisa de atenção</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {data.alerts.map((a) => (
                 <Link
                   key={a.id}
                   href={a.href}
-                  className="flex gap-3 rounded-md border p-3 transition-colors hover:bg-muted/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
+                  className="flex gap-3 rounded-lg border-border/80 bg-[#fbfcf9] p-3.5 transition-colors hover:bg-[#f0f4ef] focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
                 >
                   <AlertTriangle
                     className={cn(
@@ -217,11 +217,11 @@ export default async function AdminDashboardPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Atalhos</CardTitle>
+              <CardTitle className="text-[14px] font-semibold tracking-[-0.015em] text-[#263b31]">Atalhos</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-2">
               {quickActions.map(({ label, href, icon: Icon }) => (
-                <Button key={href} asChild variant="outline" className="h-auto flex-col gap-2 py-4">
+                <Button key={href} asChild variant="outline" className="h-auto min-h-[88px] flex-col gap-2 rounded-lg border-border/80 bg-[#fbfcf9] py-4 text-[#52665a] transition-colors hover:border-[#c5d4c8] hover:bg-[#f0f4ef] hover:text-[#173f35]">
                   <Link href={href}>
                     <Icon className="size-5" />
                     <span className="text-center text-xs font-medium">{label}</span>
