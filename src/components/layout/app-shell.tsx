@@ -11,20 +11,27 @@ interface AppShellProps {
 
 export function AppShell({ user, children }: AppShellProps) {
   return (
-    <div className="min-h-dvh bg-muted/30">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r bg-background lg:flex">
-        <div className="flex h-16 items-center gap-2.5 border-b px-5 font-semibold">
-          <span className="flex size-8 items-center justify-center rounded-md bg-[#1d3f38] text-[#f2efe6]">
-            <GraduationCap className="size-4" />
+    <div className="min-h-dvh bg-background">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-[264px] flex-col border-r border-border/80 bg-[#fbfcf9] lg:flex">
+        <div className="flex h-[72px] items-center gap-3 border-b border-border/70 px-6">
+          <span className="flex size-9 items-center justify-center rounded-lg bg-[#173f35] text-[#f3f4ef] shadow-sm">
+            <GraduationCap className="size-[18px]" strokeWidth={1.8} />
           </span>
-          Gestão Escolar
+          <div className="min-w-0">
+            <p className="text-[15px] font-semibold tracking-[-0.025em] text-[#20352d]">Gestão Escolar</p>
+            <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.13em] text-[#78847c]">Plataforma de gestão</p>
+          </div>
         </div>
         <SidebarNav role={user.role} />
+        <div className="border-t border-border/70 px-6 py-4">
+          <p className="text-[11px] text-muted-foreground">Ambiente escolar</p>
+          <p className="mt-1 truncate text-xs font-medium text-foreground">{user.schoolName}</p>
+        </div>
       </aside>
 
-      <div className="lg:pl-64">
+      <div className="lg:pl-[264px]">
         <AppHeader user={user} />
-        <main className="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="mx-auto w-full max-w-[1440px] space-y-7 px-4 py-6 sm:px-7 sm:py-8 xl:px-10">{children}</main>
       </div>
     </div>
   );

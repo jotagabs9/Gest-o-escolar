@@ -4,56 +4,54 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    color-scheme: light;
+    --background: 80 17% 95%;
+    --foreground: 155 18% 16%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 155 18% 16%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    --popover-foreground: 155 18% 16%;
+    --primary: 163 47% 17%;
+    --primary-foreground: 80 25% 96%;
+    --secondary: 142 24% 89%;
+    --secondary-foreground: 155 24% 19%;
+    --muted: 90 12% 91%;
+    --muted-foreground: 150 7% 42%;
+    --accent: 42 22% 91%;
+    --accent-foreground: 155 18% 20%;
+    --destructive: 0 62% 48%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
-    --radius: 0.5rem;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: 240 10% 3.9%;
-      --foreground: 0 0% 98%;
-      --card: 240 10% 3.9%;
-      --card-foreground: 0 0% 98%;
-      --popover: 240 10% 3.9%;
-      --popover-foreground: 0 0% 98%;
-      --primary: 0 0% 98%;
-      --primary-foreground: 240 5.9% 10%;
-      --secondary: 240 3.7% 15.9%;
-      --secondary-foreground: 0 0% 98%;
-      --muted: 240 3.7% 15.9%;
-      --muted-foreground: 240 5% 64.9%;
-      --accent: 240 3.7% 15.9%;
-      --accent-foreground: 0 0% 98%;
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 0 0% 98%;
-      --border: 240 3.7% 15.9%;
-      --input: 240 3.7% 15.9%;
-      --ring: 240 4.9% 83.9%;
-    }
+    --border: 100 10% 85%;
+    --input: 100 10% 82%;
+    --ring: 163 47% 27%;
+    --radius: 0.65rem;
   }
 
   * {
     @apply border-border;
   }
+
+  html {
+    background: hsl(var(--background));
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01" on, "cv11" on;
+  }
+
+  ::selection {
+    background: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+  }
+}
+
+@layer components {
+  .institutional-card {
+    @apply rounded-xl border border-border/80 bg-card shadow-[0_1px_2px_rgba(24,48,38,0.035)];
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground;
   }
 }
