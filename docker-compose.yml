@@ -1,0 +1,27 @@
+# Banco de desenvolvimento: PostgreSQL 16.
+#   docker compose up -d      sobe o banco (a primeira vez cria as roles via db/init)
+#   docker compose down -v    apaga o banco e os dados (recomeça do zero)
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: gestao-escolar-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: school_saas
+      # senha da role de runtime (usada por db/init/01-roles.sh); precisa bater com o RUNTIME_DATABASE_URL do .env
+      RUNTIME_DB_PASSWORD: ${RUNTIME_DB_PASSWORD:-runtime_dev_pw}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d school_saas"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

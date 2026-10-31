@@ -1,0 +1,156 @@
+// ============================================================================
+// SCHEMA PARCIAL: contém SÓ os models necessários ao login e ao seed deste projeto
+// (Organization, School, User, SchoolMembership, Role, UserRoleAssignment, Teacher, Guardian).
+//
+// O seu schema.prisma COMPLETO (turmas, matrículas, notas, frequência etc.) não estava disponível quando este
+// projeto foi montado. Para o sistema inteiro: SUBSTITUA este arquivo pelo seu e, se tiver, coloque o seu
+// rls-policies.sql em db/rls/rls-policies.sql (ver README.md).
+// Campos além dos mostrados no schema original (timestamps, relações extras) foram acrescentados aqui só para
+// o arquivo ser válido.
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum ScopeType {
+  ORGANIZATION
+  SCHOOL
+  CLASS_GROUP
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  taxId     String?  @map("tax_id")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  schools School[]
+  users   User[]
+  roles   Role[]
+
+  @@map("organizations")
+}
+
+model School {
+  id             String   @id @default(cuid())
+  organizationId String   @map("organization_id")
+  name           String
+  inepCode       String?  @map("inep_code")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization      Organization       @relation(fields: [organizationId], references: [id])
+  schoolMemberships SchoolMembership[]
+  teachers          Teacher[]
+
+  @@index([organizationId])
+  @@map("schools")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  organizationId String   @map("organization_id")
+  email          String   @unique
+  passwordHash   String   @map("password_hash")
+  fullName       String   @map("full_name")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization      Organization         @relation(fields: [organizationId], references: [id])
+  schoolMemberships SchoolMembership[]
+  roleAssignments   UserRoleAssignment[]
+  teacherProfile    Teacher?
+  guardianProfile   Guardian?
+
+  @@index([organizationId])
+  @@map("users")
+}
+
+model SchoolMembership {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  schoolId  String   @map("school_id")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@unique([userId, schoolId])
+  @@index([schoolId])
+  @@map("school_memberships")
+}
+
+model Role {
+  id             String   @id @default(cuid())
+  organizationId String?  @map("organization_id")
+  name           String
+  description    String?
+  isSystemRole   Boolean  @default(false) @map("is_system_role")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  organization    Organization?        @relation(fields: [organizationId], references: [id])
+  roleAssignments UserRoleAssignment[]
+
+  @@unique([organizationId, name])
+  @@map("roles")
+}
+
+model UserRoleAssignment {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  roleId    String    @map("role_id")
+  scopeType ScopeType @map("scope_type")
+  scopeId   String    @map("scope_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@unique([userId, roleId, scopeType, scopeId])
+  @@index([userId])
+  @@map("user_role_assignments")
+}
+
+model Teacher {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  schoolId  String   @map("school_id")
+  fullName  String   @map("full_name")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId])
+  @@map("teachers")
+}
+
+model Guardian {
+  id        String   @id @default(cuid())
+  userId    String?  @unique @map("user_id")
+  fullName  String   @map("full_name")
+  phone     String?
+  email     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("guardians")
+}
