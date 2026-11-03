@@ -18,8 +18,8 @@ export function AppShell({ user, children }: AppShellProps) {
             <GraduationCap className="size-[18px]" strokeWidth={1.8} />
           </span>
           <div className="min-w-0">
-            <p className="text-[15px] font-semibold tracking-[-0.025em]">Gestão Escolar</p>
-            <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.13em] text-muted-foreground">Plataforma de gestão</p>
+            <p className="text-[14px] font-semibold tracking-[0.08em]">AURA SYSTEM</p>
+            <p className="mt-0.5 text-[10px] font-medium text-muted-foreground">Gestão Escolar</p>
           </div>
         </div>
         <SidebarNav role={user.role} />
