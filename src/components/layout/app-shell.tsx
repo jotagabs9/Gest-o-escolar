@@ -24,8 +24,8 @@ export function AppShell({ user, children }: AppShellProps) {
         </div>
         <SidebarNav role={user.role} />
         <div className="border-t border-border/70 px-6 py-4">
-          <p className="text-[11px] text-muted-foreground">Ambiente escolar</p>
-          <p className="mt-1 truncate text-xs font-medium text-foreground">{user.schoolName}</p>
+          <p className="text-[11px] text-muted-foreground">Plataforma</p>
+          <p className="mt-1 truncate text-xs font-medium text-foreground">AURA SYSTEM</p>
         </div>
       </aside>
       <div className="lg:pl-[264px]">
