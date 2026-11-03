@@ -6,7 +6,7 @@ import { ROLE_HOME } from "@/lib/roles";
 import { getSession } from "@/lib/session";
 import { demoAccounts } from "@/server/auth/demo";
 
-export const metadata: Metadata = { title: "Entrar | Gestão Escolar" };
+export const metadata: Metadata = { title: "Entrar | AURA SYSTEM" };
 
 /** Amostra ilustrativa (mock) para o painel de marca. */
 const sampleRows = [
@@ -17,22 +17,23 @@ const sampleRows = [
 ];
 
 export default async function LoginPage() {
-  // Sessão válida (já confirmada no banco): não faz sentido ver o login.
   const session = await getSession();
   if (session) redirect(ROLE_HOME[session.role]);
 
   return (
     <main className="grid min-h-dvh lg:grid-cols-[1.05fr_1fr]">
-      {/* Painel de marca: quadro-negro com um boletim de exemplo */}
       <section
         aria-hidden="true"
         className="relative hidden flex-col justify-between overflow-hidden bg-[#1d3f38] p-12 text-[#f2efe6] lg:flex"
       >
-        <div className="flex items-center gap-2.5 text-lg font-semibold">
+        <div className="flex items-center gap-2.5">
           <span className="flex size-9 items-center justify-center rounded-md bg-[#f2efe6] text-[#1d3f38]">
             <GraduationCap className="size-5" />
           </span>
-          Gestão Escolar
+          <div>
+            <p className="text-base font-semibold tracking-[0.12em]">AURA SYSTEM</p>
+            <p className="mt-0.5 text-[11px] text-[#f2efe6]/65">GESTÃO ESCOLAR</p>
+          </div>
         </div>
 
         <div className="space-y-10">
@@ -64,14 +65,16 @@ export default async function LoginPage() {
         </p>
       </section>
 
-      {/* Formulário */}
       <section className="flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm space-y-8">
-          <div className="flex items-center gap-2.5 font-semibold lg:hidden">
+          <div className="flex items-center gap-2.5 lg:hidden">
             <span className="flex size-9 items-center justify-center rounded-md bg-[#1d3f38] text-[#f2efe6]">
               <GraduationCap className="size-5" />
             </span>
-            Gestão Escolar
+            <div>
+              <p className="text-sm font-semibold tracking-[0.1em]">AURA SYSTEM</p>
+              <p className="text-[10px] text-muted-foreground">GESTÃO ESCOLAR</p>
+            </div>
           </div>
 
           <div className="space-y-2">
