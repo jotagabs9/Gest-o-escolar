@@ -88,3 +88,24 @@ O login do funcionário/admin permanece no caminho atual e deve continuar cobert
 - O e-mail do responsável será verificado antes de habilitar recuperação de senha?
 
 Até essas respostas serem confirmadas, manter o escopo inicial limitado a uma escola por conta de portal e não inventar suporte multi-escola.
+
+
+## Verificação adicional da integração com o código atual (03/11/2026)
+
+A inspeção do fluxo completo de sessão identificou dependências que precisam ser resolvidas antes de escrever a migration:
+
+- `src/lib/session.ts` chama `isSessionStillValid(userId, organizationId, schoolId, role)` em toda sessão validada.
+- `src/server/auth/membership-check.ts` revalida exclusivamente via `app_auth.membership_lookup(userId, schoolId)` e compara o papel calculado a partir de `user_role_assignments`. Um `PortalAccount.id` não é um `User.id`; passar um no outro invalidaria a sessão ou exigiria uma consulta incorreta.
+- `src/server/db/tenant.ts` monta `app.current_user_id` com `session.id`. Portanto, trocar apenas o tipo de identidade sem definir como as políticas RLS reconhecem o principal do portal pode negar acesso ou, pior, ampliar acesso indevidamente.
+- `src/server/auth/access.ts`, `src/lib/roles.ts`, `src/types/next-auth.d.ts`, `src/auth.config.ts` e o shell do dashboard também assumem um único conjunto de papéis e uma rota inicial por papel. A separação precisa atravessar middleware, sessão, guards e navegação, não só o provider Credentials.
+- `src/app/(dashboard)/aluno/page.tsx` ainda importa `src/lib/mock/aluno`; o login não deve ser anunciado como pronto enquanto o painel não consultar o aluno autenticado.
+- A árvore atual do GitHub contém `db/rls/demo/00-auth-subset.sql`, mas não o arquivo completo de políticas RLS referido em comentários e no histórico local. O próprio `prisma/schema.prisma` declara ser parcial. Não há, portanto, evidência suficiente no repositório remoto para gerar uma migration acadêmica/portal compatível com o banco real.
+
+### Gate técnico antes da primeira alteração de banco
+
+1. Recuperar e conferir a versão canônica do schema acadêmico e das políticas RLS que realmente correspondem ao banco de homologação/local.
+2. Fazer introspecção somente leitura do PostgreSQL descartável/homologação e comparar tabelas, constraints, enums, funções, triggers e grants com o Prisma.
+3. Definir formalmente o contrato RLS para STAFF, STUDENT e GUARDIAN, incluindo a identidade usada em `app.current_user_id` e as funções de lookup/revalidação.
+4. Só então preparar migration aditiva e testes de integração em PostgreSQL descartável. Não executar `db push`, migration ou SQL no Supabase de produção nesta fase.
+
+Esta verificação é um bloqueio de segurança, não uma mudança de escopo: os logins continuam sendo matrícula+senha para aluno e e-mail+senha para responsável, com o login administrativo preservado.
