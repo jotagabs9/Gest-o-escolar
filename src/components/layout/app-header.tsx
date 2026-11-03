@@ -16,8 +16,8 @@ export function AppHeader({ user }: { user: SessionUser }) {
           <Building2 className="size-4" strokeWidth={1.8} />
         </span>
         <div className="min-w-0 leading-tight">
-          <p className="truncate text-[13px] font-semibold tracking-[-0.01em]">{user.schoolName}</p>
-          <p className="mt-1 truncate text-[11px] text-muted-foreground">{user.organizationName}</p>
+          <p className="truncate text-[13px] font-semibold tracking-[0.06em]">AURA SYSTEM</p>
+          <p className="mt-1 truncate text-[11px] text-muted-foreground">Gestão Escolar</p>
         </div>
       </div>
       <Badge variant="outline" className="hidden border-border bg-card px-2.5 py-1 text-[10px] font-medium text-muted-foreground sm:inline-flex">
