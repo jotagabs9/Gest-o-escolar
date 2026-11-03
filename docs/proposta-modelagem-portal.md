@@ -109,3 +109,37 @@ A inspeção do fluxo completo de sessão identificou dependências que precisam
 4. Só então preparar migration aditiva e testes de integração em PostgreSQL descartável. Não executar `db push`, migration ou SQL no Supabase de produção nesta fase.
 
 Esta verificação é um bloqueio de segurança, não uma mudança de escopo: os logins continuam sendo matrícula+senha para aluno e e-mail+senha para responsável, com o login administrativo preservado.
+
+
+## Evidências recuperadas do pacote histórico enviado (03/11/2026)
+
+O pacote contém `schema.prisma` (49 models e 18 enums), `rls-policies.sql`, `seed.ts`, `docker-compose.yml`, `001-create-runtime-role.sql`, relatórios das Fases 0, 1, 1.1 e 1.2, além de três arquivos de testes de integração. A contagem observada diretamente no arquivo é 49 models; alguns relatórios antigos citam 46, então a contagem deve ser corrigida/explicada antes de tratar o inventário como definitivo.
+
+### Compatibilidade confirmada e lacunas
+
+- O schema histórico inclui `Student`, `Guardian`, `StudentGuardian` e `Enrollment`, com a decisão aprovada de uma `Enrollment` por aluno/ano e percursos em `EnrollmentCurriculum`.
+- `Student` histórico NÃO possui número oficial de matrícula nem relação direta com uma identidade de autenticação. `Guardian.email` é opcional; `Guardian.userId` é opcional e aponta para `User`. `StudentGuardian` liga estudante e responsável, mas não contém `schoolId` próprio nem regras de autenticação.
+- O histórico não implementa portal de aluno/responsável. A seção 6.5 do `rls-policies.sql` exclui explicitamente `users`, `roles`, `permissions`, `role_permissions`, `user_role_assignments`, `school_memberships`, `guardians`, `student_guardians` e `notifications` do RLS, reservando o desenho dessas tabelas para a Fase 2 (Auth + RBAC).
+- O arquivo histórico protege 25 tabelas acadêmicas por RLS e contém 29 policies, 22 funções e 18 triggers. Essas proteções não equivalem a autorização de portal: não existe ainda regra RLS que traduza uma sessão de aluno em acesso ao próprio estudante, ou uma sessão de responsável em acesso aos alunos ligados.
+- `001-create-runtime-role.sql` e `FASE1.2-RLS-OWNERSHIP.md` separam role de migração e runtime. O relatório declara expressamente que a validação real contra PostgreSQL não foi executada naquela fase; os testes foram escritos, mas não comprovam isolamento até serem executados.
+- O schema histórico também não é automaticamente compatível com o `main`: o Prisma do `main` é um subconjunto de autenticação com nomes/campos/relações próprios, e `db/rls/demo/00-auth-subset.sql` é demonstrativo. O pacote histórico deve ser tratado como fonte de domínio candidata, não como migration pronta.
+
+### Decisões de implementação que ficam adotadas para a próxima etapa
+
+1. Manter `User`/`SchoolMembership`/`UserRoleAssignment` para equipe e administração; não converter aluno em usuário de equipe nem inventar e-mail para matrícula.
+2. Introduzir identidade de portal separada, vinculada exatamente a um `Student` OU a um `Guardian`, com tipo discriminado, hash de senha, status, `mustChangePassword` e trilha de auditoria. A conta não poderá apontar simultaneamente para estudante e responsável.
+3. Para aluno, o identificador será a matrícula oficial fornecida/confirmada pela escola; não gerar número fictício. A unicidade e a resolução no login precisam ser verificadas no escopo institucional. Se a matrícula não identificar uma única conta, falhar fechado e exigir desambiguação institucional, nunca escolher a primeira correspondência.
+4. Para responsável, o identificador será e-mail normalizado e verificado, associado ao perfil `Guardian`; um responsável só acessará estudantes por vínculos `StudentGuardian` ativos.
+5. A sessão terá principal discriminado (`STAFF`, `STUDENT`, `GUARDIAN`). Para portal, não reutilizar `PortalAccount.id` como `app.current_user_id`: esse setting hoje representa `User.id` e é usado, por exemplo, pela regra de atribuição docente. O contrato RLS do portal terá contexto próprio, validado em transação, e funções auxiliares que limitem estudante/responsável aos registros relacionados.
+6. A conta de responsável será por organização, não duplicada por escola: o mesmo e-mail poderá acessar estudantes vinculados em escolas da mesma organização. A autorização continuará limitada a vínculos ativos. Não será permitido atravessar organizações.
+7. A matrícula será procurada entre as escolas ativas da organização da plataforma; se houver colisão, o login falhará fechado. Uma futura tela de seleção/código de escola só será adicionada se a regra real da rede exigir esse desempate.
+8. Provisionamento inicial por senha temporária aleatória, exibida uma única vez a operador autorizado; somente hash persistido; troca obrigatória no primeiro acesso. Recuperação por e-mail fica bloqueada até existir provedor transacional e verificação de endereço.
+
+### Plano de implementação após a auditoria
+
+- Primeiro reconciliar o schema histórico com o schema real de homologação/local e com as migrations do `main`; não copiar o arquivo histórico inteiro por cima.
+- Implementar em branch isolada as entidades mínimas de matrícula oficial e conta de portal, a sessão discriminada, os lookups de autenticação/revalidação e as policies RLS próprias para aluno/responsável.
+- Adaptar o cadastro administrativo para persistir `Student`, `Guardian` e `StudentGuardian`, com matrícula oficial inserida/confirmada pela escola e provisionamento seguro de conta.
+- Implementar painéis com consultas reais filtradas pela identidade autenticada, substituindo os mocks antes de considerar os logins funcionais.
+- Executar testes de integração PostgreSQL com pelo menos duas escolas, dois alunos, dois responsáveis e um responsável com mais de um estudante; testar SELECT e mutações proibidas, além de regressão do login administrativo.
+- Não aplicar migrations, `db push` ou SQL no Supabase de produção nesta etapa.
