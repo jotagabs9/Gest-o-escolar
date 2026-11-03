@@ -9,7 +9,7 @@ export function demoEmail(role: Role): string | undefined {
   const map: Record<Role, string | undefined> = {
     SCHOOL_ADMIN: process.env.DEMO_ADMIN_EMAIL,
     TEACHER: process.env.DEMO_TEACHER_EMAIL,
-    STUDENT_GUARDIAN: process.env.DEMO_GUARDIAN_EMAIL,
+    STUDENT_GUARDIAN: process.env.DEMO_STUDENT_EMAIL ?? process.env.DEMO_GUARDIAN_EMAIL,
   };
   return map[role];
 }
