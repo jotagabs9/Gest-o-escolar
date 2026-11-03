@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { GraduationCap } from "lucide-react";
 import { LoginForm } from "@/components/auth/login-form";
@@ -85,6 +86,12 @@ export default async function LoginPage() {
           </div>
 
           <LoginForm demoAccounts={demoAccounts()} />
+          <p className="text-center text-xs text-muted-foreground">
+            Ao continuar, consulte nosso{" "}
+            <Link href="/privacidade" className="font-medium text-[#315f4e] underline underline-offset-4">
+              aviso de privacidade
+            </Link>.
+          </p>
         </div>
       </section>
     </main>
