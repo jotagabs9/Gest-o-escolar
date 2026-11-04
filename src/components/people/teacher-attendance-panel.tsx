@@ -55,7 +55,7 @@ export function TeacherAttendancePanel({ initialTeachers, date }: { initialTeach
     <Card><CardContent className="flex flex-col gap-3 p-4 md:flex-row md:items-end md:justify-between">
       <div className="space-y-1.5"><label htmlFor="attendance-date" className="text-sm font-medium">Data da chamada</label>
         <div className="relative"><CalendarDays className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input id="attendance-date" type="date" value={date} onChange={e => router.push("/admin/frequencia-professores?data=" + e.target.value)} className="pl-9 md:w-52" /></div>
+          <Input id="attendance-date" type="date" value={date} onChange={e => { setDrafts({}); router.push("/admin/frequencia-professores?data=" + e.target.value); }} className="pl-9 md:w-52" /></div>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 md:flex">
         <div className="space-y-1.5"><label htmlFor="attendance-search" className="text-sm font-medium">Buscar professor</label>
@@ -74,7 +74,7 @@ export function TeacherAttendancePanel({ initialTeachers, date }: { initialTeach
       <Badge variant="outline">{registered} de {initialTeachers.length} registros</Badge></div>
     <Card><CardContent className="p-0">{rows.length === 0 ? <p className="px-6 py-10 text-center text-sm text-muted-foreground">Nenhum professor encontrado com esses filtros.</p> :
       <div className="divide-y">{rows.map(t => { const draft = draftFor(t); return <div key={t.teacherId} className="space-y-3 px-4 py-4 sm:px-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><p className="font-medium">{t.name}</p><p className="text-sm text-muted-foreground">{t.email}</p>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><p className="font-medium">{t.name}</p>{t.email && <p className="text-sm text-muted-foreground">{t.email}</p>}
           <p className="mt-1 text-xs text-muted-foreground">Status salvo: {STATUS[t.status].label}</p></div>
           <div className="flex flex-wrap gap-2">{(["PRESENT", "ABSENT", "LATE"] as const).map(status => <Button key={status} type="button" size="sm" variant={draft.status === status ? "default" : "outline"} onClick={() => setDrafts(old => ({ ...old, [t.teacherId]: { ...draft, status } }))}>{STATUS[status].label}</Button>)}</div>
         </div>
