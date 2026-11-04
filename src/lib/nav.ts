@@ -72,7 +72,8 @@ export const NAV_BY_ROLE: Record<Role, NavGroup[]> = {
       items: [
         { label: "Minhas turmas", href: "/professor/turmas", icon: Users },
         { label: "Notas", href: "/professor/notas", icon: BookOpenCheck },
-        { label: "Frequência", href: "/professor/frequencia", icon: ClipboardCheck },
+        { label: "Frequência das turmas", href: "/professor/frequencia", icon: ClipboardCheck },
+        { label: "Minha frequência", href: "/professor/minha-frequencia", icon: CalendarDays },
       ],
     },
   ],
