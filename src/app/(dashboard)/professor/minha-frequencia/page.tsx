@@ -19,7 +19,7 @@ const labels = { PRESENT: "Presente", ABSENT: "Falta", LATE: "Atraso" } as const
 
 export default async function MyTeacherAttendancePage() {
   await requireRole("TEACHER");
-  const records = await withSession(async (tx, session) => tx.$queryRaw<RecordRow[]>\`
+  const records = await withSession(async (tx, session) => tx.$queryRaw<RecordRow[]>`
     SELECT
       to_char(a.attendance_date, 'YYYY-MM-DD') AS date,
       a.status,
@@ -32,7 +32,7 @@ export default async function MyTeacherAttendancePage() {
       AND t.is_active = true
     ORDER BY a.attendance_date DESC
     LIMIT 90
-  \`);
+  `);
 
   return (
     <div className="space-y-6">
