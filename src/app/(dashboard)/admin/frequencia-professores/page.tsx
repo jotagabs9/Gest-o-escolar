@@ -13,11 +13,11 @@ export default async function TeacherAttendanceAdminPage({
 }) {
   await requireRole("SCHOOL_ADMIN");
   const { data } = await searchParams;
-  const date = data && /^\\d{4}-\\d{2}-\\d{2}$/.test(data)
+  const date = data && /^\d{4}-\d{2}-\d{2}$/.test(data)
     ? data
     : new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
 
-  const teachers = await withSession(async (tx, session) => tx.$queryRaw<TeacherAttendanceItem[]>\`
+  const teachers = await withSession(async (tx, session) => tx.$queryRaw<TeacherAttendanceItem[]>`
     SELECT
       t.id AS "teacherId",
       t.full_name AS name,
@@ -35,7 +35,7 @@ export default async function TeacherAttendanceAdminPage({
     WHERE t.school_id = ${session.schoolId}
       AND t.is_active = true
     ORDER BY t.full_name
-  \`);
+  `);
 
   return <TeacherAttendancePanel initialTeachers={teachers} date={date} />;
 }
