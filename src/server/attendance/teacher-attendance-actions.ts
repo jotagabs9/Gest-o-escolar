@@ -21,16 +21,16 @@ export async function saveTeacherAttendance(input: unknown): Promise<{ ok: true 
   try {
     await requireRole("SCHOOL_ADMIN");
     await withSession(async (tx, session) => {
-      const [teacher] = await tx.$queryRaw<{ id: string }[]>\`
+      const [teacher] = await tx.$queryRaw<{ id: string }[]>`
         SELECT id FROM public.teachers
         WHERE id = ${parsed.data.teacherId}
           AND school_id = ${session.schoolId}
           AND is_active = true
         LIMIT 1
-      \`;
+      `;
       if (!teacher) throw new Error("Professor não encontrado nesta escola.");
 
-      await tx.$executeRaw\`
+      await tx.$executeRaw`
         INSERT INTO public.teacher_attendance_records
           (school_id, teacher_id, attendance_date, status, check_in_time, note, recorded_by_user_id)
         VALUES (
@@ -49,7 +49,7 @@ export async function saveTeacherAttendance(input: unknown): Promise<{ ok: true 
           note = EXCLUDED.note,
           recorded_by_user_id = EXCLUDED.recorded_by_user_id,
           updated_at = now()
-      \`;
+      `;
     });
     revalidatePath("/admin/frequencia-professores");
     revalidatePath("/professor/minha-frequencia");
