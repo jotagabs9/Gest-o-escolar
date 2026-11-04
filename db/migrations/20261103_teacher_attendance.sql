@@ -1,4 +1,4 @@
--- Frequência diária de professores. Não altera tabelas acadêmicas existentes.
+-- Frequência diária de professores. Idempotente: pode ser executada novamente.
 BEGIN;
 
 CREATE TABLE IF NOT EXISTS public.teacher_attendance_records (
@@ -22,21 +22,28 @@ CREATE INDEX IF NOT EXISTS teacher_attendance_teacher_date_idx
 
 ALTER TABLE public.teacher_attendance_records ENABLE ROW LEVEL SECURITY;
 
+-- Usa diretamente as configurações de tenant definidas por withSession.
+-- Isso evita depender da implementação de current_school_ids() no banco hospedado.
 DROP POLICY IF EXISTS teacher_attendance_read ON public.teacher_attendance_records;
 CREATE POLICY teacher_attendance_read ON public.teacher_attendance_records
 FOR SELECT USING (
-  school_id = ANY (current_school_ids())
+  school_id = ANY (
+    COALESCE(
+      string_to_array(NULLIF(current_setting('app.current_school_ids', true), ''), ','),
+      ARRAY[]::text[]
+    )
+  )
   AND (
     EXISTS (
       SELECT 1 FROM public.teachers t
       WHERE t.id = teacher_attendance_records.teacher_id
-        AND t.user_id = current_user_id()
+        AND t.user_id::text = NULLIF(current_setting('app.current_user_id', true), '')
         AND t.school_id = teacher_attendance_records.school_id
     )
     OR EXISTS (
       SELECT 1
       FROM public.schools s
-      JOIN public.user_role_assignments a ON a.user_id = current_user_id()
+      JOIN public.user_role_assignments a ON a.user_id::text = NULLIF(current_setting('app.current_user_id', true), '')
       JOIN public.roles r ON r.id = a.role_id
       WHERE s.id = teacher_attendance_records.school_id
         AND (
@@ -51,12 +58,17 @@ FOR SELECT USING (
 DROP POLICY IF EXISTS teacher_attendance_admin_insert ON public.teacher_attendance_records;
 CREATE POLICY teacher_attendance_admin_insert ON public.teacher_attendance_records
 FOR INSERT WITH CHECK (
-  school_id = ANY (current_school_ids())
-  AND recorded_by_user_id = current_user_id()
+  school_id = ANY (
+    COALESCE(
+      string_to_array(NULLIF(current_setting('app.current_school_ids', true), ''), ','),
+      ARRAY[]::text[]
+    )
+  )
+  AND recorded_by_user_id = NULLIF(current_setting('app.current_user_id', true), '')
   AND EXISTS (
     SELECT 1
     FROM public.schools s
-    JOIN public.user_role_assignments a ON a.user_id = current_user_id()
+    JOIN public.user_role_assignments a ON a.user_id::text = NULLIF(current_setting('app.current_user_id', true), '')
     JOIN public.roles r ON r.id = a.role_id
     WHERE s.id = teacher_attendance_records.school_id
       AND (
@@ -70,11 +82,16 @@ FOR INSERT WITH CHECK (
 DROP POLICY IF EXISTS teacher_attendance_admin_update ON public.teacher_attendance_records;
 CREATE POLICY teacher_attendance_admin_update ON public.teacher_attendance_records
 FOR UPDATE USING (
-  school_id = ANY (current_school_ids())
+  school_id = ANY (
+    COALESCE(
+      string_to_array(NULLIF(current_setting('app.current_school_ids', true), ''), ','),
+      ARRAY[]::text[]
+    )
+  )
   AND EXISTS (
     SELECT 1
     FROM public.schools s
-    JOIN public.user_role_assignments a ON a.user_id = current_user_id()
+    JOIN public.user_role_assignments a ON a.user_id::text = NULLIF(current_setting('app.current_user_id', true), '')
     JOIN public.roles r ON r.id = a.role_id
     WHERE s.id = teacher_attendance_records.school_id
       AND (
@@ -84,11 +101,15 @@ FOR UPDATE USING (
       AND upper(r.name) IN ('ADMIN_ESCOLA', 'ADMIN_DA_ESCOLA', 'SCHOOL_ADMIN')
   )
 ) WITH CHECK (
-  school_id = ANY (current_school_ids())
-  AND recorded_by_user_id = current_user_id()
+  school_id = ANY (
+    COALESCE(
+      string_to_array(NULLIF(current_setting('app.current_school_ids', true), ''), ','),
+      ARRAY[]::text[]
+    )
+  )
+  AND recorded_by_user_id = NULLIF(current_setting('app.current_user_id', true), '')
 );
 
--- O projeto usa uma role de runtime própria. Concede acesso somente se ela existir.
 DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'app_runtime') THEN
