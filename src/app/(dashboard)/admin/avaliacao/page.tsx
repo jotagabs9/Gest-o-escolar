@@ -16,7 +16,7 @@ import { teacherAssignments, teacherProfiles } from "@/lib/mock/people";
 import { matchesQuery } from "@/lib/people";
 import { requireRole } from "@/lib/session";
 
-export const metadata: Metadata = { title: "Notas e frequência | Gestão Escolar" };
+export const metadata: Metadata = { title: "Notas e frequência dos alunos | Gestão Escolar" };
 
 export default async function AdminAssessmentPage({
   searchParams,
@@ -50,7 +50,7 @@ export default async function AdminAssessmentPage({
 
   return (
     <>
-      <PageHeader title="Notas e frequência" description="Acompanhamento por turma e componente. Somente leitura: o lançamento é feito pelo professor alocado." />
+      <PageHeader title="Notas e frequência dos alunos" description="Consulte as notas e a frequência dos alunos por turma, componente e professor." />
 
       <FilterBar
         search={{ key: "q", label: "Componente", placeholder: "Nome do componente" }}

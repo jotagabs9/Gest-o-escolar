@@ -54,8 +54,14 @@ export const NAV_BY_ROLE: Record<Role, NavGroup[]> = {
       label: "Secretaria",
       items: [
         { label: "Matrículas", href: "/admin/matriculas", icon: FileText },
-        { label: "Notas e frequência", href: "/admin/avaliacao", icon: BarChart3 },
         { label: "Boletins", href: "/admin/boletins", icon: ScrollText },
+      ],
+    },
+    {
+      label: "Notas e frequência",
+      items: [
+        { label: "Professores", href: "/admin/frequencia-professores", icon: ClipboardCheck },
+        { label: "Alunos", href: "/admin/avaliacao", icon: BarChart3 },
       ],
     },
   ],

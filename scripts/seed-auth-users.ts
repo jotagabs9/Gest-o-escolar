@@ -1,5 +1,5 @@
 /**
- * Seed de usuários de TESTE para o login real (admin, professor, responsável).
+ * Seed de usuários de TESTE para o login real (admin, professor, aluno e responsável).
  *
  *   npx tsx --env-file=.env scripts/seed-auth-users.ts
  *
@@ -21,6 +21,7 @@ const PASSWORD = "senha123";
 const ROLES = [
   { name: "ADMIN_ESCOLA", description: "Administrador da escola" },
   { name: "PROFESSOR", description: "Professor" },
+  { name: "ALUNO", description: "Aluno (acesso demonstrativo)" },
   { name: "RESPONSAVEL", description: "Responsável pelo aluno" },
 ] as const;
 type RoleName = (typeof ROLES)[number]["name"];
@@ -28,6 +29,7 @@ type RoleName = (typeof ROLES)[number]["name"];
 const USERS: { email: string; fullName: string; role: RoleName }[] = [
   { email: "admin@escola.com", fullName: "Admin da Escola", role: "ADMIN_ESCOLA" },
   { email: "professor@escola.com", fullName: "Rafael Nogueira", role: "PROFESSOR" },
+  { email: "aluno@escola.com", fullName: "Ana Beatriz Almeida", role: "ALUNO" },
   { email: "responsavel@escola.com", fullName: "Carlos Almeida", role: "RESPONSAVEL" },
 ];
 
