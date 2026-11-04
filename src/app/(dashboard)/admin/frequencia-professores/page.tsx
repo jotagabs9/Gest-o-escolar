@@ -21,13 +21,12 @@ export default async function TeacherAttendanceAdminPage({
     SELECT
       t.id AS "teacherId",
       t.full_name AS name,
-      u.email,
+      ''::text AS email,
       ''::text AS specialty,
       CASE WHEN a.check_in_time IS NULL THEN '' ELSE to_char(a.check_in_time, 'HH24:MI') END AS time,
       COALESCE(a.status, 'PENDING') AS status,
       COALESCE(a.note, '') AS note
     FROM public.teachers t
-    JOIN public.users u ON u.id = t.user_id
     LEFT JOIN public.teacher_attendance_records a
       ON a.teacher_id = t.id
       AND a.school_id = t.school_id
