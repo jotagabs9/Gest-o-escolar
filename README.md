@@ -30,7 +30,7 @@ npm run db:setup              # 3. tabelas + RLS + seed + verificação
 npm run dev                   # 5. http://localhost:3000
 ```
 
-Logins de teste (senha `senha123`): `admin@escola.com`, `professor@escola.com`, `responsavel@escola.com`.
+Logins de teste (senha `senha123`): `admin@escola.com`, `professor@escola.com`, `aluno@escola.com` e `responsavel@escola.com`. (Somente banco local/de demonstração.)
 
 ## Passo a passo
 
@@ -89,7 +89,7 @@ npm run db:verify        # confere que a role de runtime NÃO fura o RLS
 
 `npm run db:seed:auth` (já incluído no `db:seed`). Ele cria, de forma idempotente (pode rodar de novo):
 
-- Roles de sistema `ADMIN_ESCOLA`, `PROFESSOR` e `RESPONSAVEL`
+- Roles de sistema `ADMIN_ESCOLA`, `PROFESSOR`, `ALUNO` e `RESPONSAVEL`
 - Os usuários abaixo, cada um com `SchoolMembership` e `UserRoleAssignment` (escopo `SCHOOL`) na primeira escola ativa
 - `Teacher` para o professor e `Guardian` para o responsável
 
@@ -109,9 +109,10 @@ Abra http://localhost:3000. Sem sessão, você é levado para `/login`.
 |---|---|---|---|
 | Admin da Escola | `admin@escola.com` | `senha123` | `/admin` |
 | Professor (Rafael Nogueira) | `professor@escola.com` | `senha123` | `/professor` |
+| Aluno (Ana Beatriz Almeida) | `aluno@escola.com` | `senha123` | `/aluno` |
 | Responsável (Carlos Almeida) | `responsavel@escola.com` | `senha123` | `/aluno` |
 
-Com `ENABLE_DEMO_LOGIN="true"`, a tela de login também mostra três botões de acesso rápido.
+Com `ENABLE_DEMO_LOGIN="true"`, a tela de login também mostra botões de acesso rápido para admin, professor e aluno. O botão Aluno usa `DEMO_STUDENT_EMAIL`; o responsável continua podendo entrar pelo formulário com seu e-mail e senha.
 
 **Dados ainda são mock.** O login é real, mas o conteúdo das telas vem de `src/lib/mock/`. Para as telas do professor e
 do responsável funcionarem enquanto isso, o app liga o usuário real ao professor/responsável do mock **pelo e-mail**
