@@ -35,7 +35,6 @@ export default async function NewStudentPage() {
        AND co.school_id = cg.school_id
       WHERE cg.school_id = ${session.schoolId}
         AND cg.is_active = true
-        AND ay.is_active = true
         AND cur.status = 'ACTIVE'
       ORDER BY ay.year DESC, cg.name
     `;
