@@ -33,7 +33,7 @@ export default async function NewStudentPage() {
       LEFT JOIN public.courses co
         ON co.id = cur.course_id
        AND co.school_id = cg.school_id
-      WHERE cg.school_id = \${session.schoolId}
+      WHERE cg.school_id = ${session.schoolId}
         AND cg.is_active = true
         AND ay.is_active = true
         AND cur.status = 'ACTIVE'
@@ -42,7 +42,7 @@ export default async function NewStudentPage() {
 
     return rows.map((row) => ({
       value: row.id,
-      label: `\${row.name} · \${row.academic_year}\${row.course_name ? \` · \${row.course_name}\` : ""}`,
+      label: `${row.name} · ${row.academic_year}${row.course_name ? \` · ${row.course_name}\` : ""}`,
     }));
   });
 
