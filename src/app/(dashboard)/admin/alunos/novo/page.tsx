@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { BackLink } from "@/components/academic/back-link";
 import { PageHeader } from "@/components/dashboard/page-header";
-import { StudentForm } from "@/components/people/student-form";
+import { StudentEnrollmentForm } from "@/components/people/student-enrollment-form";
 import { requireRole } from "@/lib/session";
 import { withSession } from "@/server/db/tenant";
 
@@ -50,7 +50,7 @@ export default async function NewStudentPage() {
     <>
       <BackLink href="/admin/alunos">Alunos</BackLink>
       <PageHeader title="Novo aluno" description="Cadastre o aluno e já faça sua matrícula em uma turma ativa." />
-      <StudentForm classOptions={classOptions} />
+      <StudentEnrollmentForm classOptions={classOptions} />
     </>
   );
 }
