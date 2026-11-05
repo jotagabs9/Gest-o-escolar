@@ -42,7 +42,7 @@ export default async function NewStudentPage() {
 
     return rows.map((row) => ({
       value: row.id,
-      label: `${row.name} · ${row.academic_year}${row.course_name ? \` · ${row.course_name}\` : ""}`,
+      label: `${row.name} · ${row.academic_year}${row.course_name ? ` · ${row.course_name}` : ""}`,
     }));
   });
 
