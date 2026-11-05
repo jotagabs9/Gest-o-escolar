@@ -45,7 +45,6 @@ export async function createStudentWithEnrollment(input: unknown): Promise<
         WHERE cg.id = ${parsed.data.classGroupId}
           AND cg.school_id = ${session.schoolId}
           AND cg.is_active = true
-          AND ay.is_active = true
           AND cur.status = 'ACTIVE'
         LIMIT 1
       `;
