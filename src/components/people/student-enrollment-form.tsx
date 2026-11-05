@@ -8,11 +8,11 @@ import { Input } from "@/components/ui/input";
 import type { Option } from "@/lib/mock/academic";
 import { createStudentWithEnrollment } from "@/server/people/student-actions";
 
-interface StudentFormProps {
+interface StudentEnrollmentFormProps {
   classOptions: Option[];
 }
 
-export function StudentForm({ classOptions }: StudentFormProps) {
+export function StudentEnrollmentForm({ classOptions }: StudentEnrollmentFormProps) {
   const [name, setName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [classGroupId, setClassGroupId] = useState("");
