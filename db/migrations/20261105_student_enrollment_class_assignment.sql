@@ -1,15 +1,18 @@
 -- Cadastro de aluno com matrícula e vínculo curricular na turma escolhida.
--- Idempotente: pode ser executada novamente sem duplicar os papéis ou políticas.
+-- Idempotente: pode ser executada novamente sem duplicar papéis ou políticas.
 BEGIN;
 
 INSERT INTO public.enrollment_curriculum_roles (code, name, description, is_active)
-VALUES
-  ('GENERAL_EDUCATION', 'Formação Geral', 'Vínculo curricular de formação geral.', true),
-  ('TECHNICAL_EDUCATION', 'Formação Técnica', 'Vínculo curricular de formação técnica.', true)
-ON CONFLICT (code) DO UPDATE
-SET name = EXCLUDED.name,
-    description = EXCLUDED.description,
-    is_active = true;
+SELECT v.code, v.name, v.description, true
+FROM (VALUES
+  ('GENERAL_EDUCATION', 'Formação Geral', 'Vínculo curricular de formação geral.'),
+  ('TECHNICAL_EDUCATION', 'Formação Técnica', 'Vínculo curricular de formação técnica.')
+) AS v(code, name, description)
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM public.enrollment_curriculum_roles existing
+  WHERE existing.code = v.code
+);
 
 ALTER TABLE public.enrollment_curricula ENABLE ROW LEVEL SECURITY;
 
@@ -35,6 +38,7 @@ WITH CHECK (
 DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'school_saas_runtime') THEN
+    EXECUTE 'DROP POLICY IF EXISTS enrollment_curricula_runtime_insert ON public.enrollment_curricula';
     EXECUTE $policy$
       CREATE POLICY enrollment_curricula_runtime_insert
       ON public.enrollment_curricula
