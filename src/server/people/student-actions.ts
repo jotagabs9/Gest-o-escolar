@@ -42,8 +42,8 @@ export async function createStudentWithEnrollment(input: unknown): Promise<
         LEFT JOIN public.courses co
           ON co.id = cur.course_id
          AND co.school_id = cg.school_id
-        WHERE cg.id = \${parsed.data.classGroupId}
-          AND cg.school_id = \${session.schoolId}
+        WHERE cg.id = ${parsed.data.classGroupId}
+          AND cg.school_id = ${session.schoolId}
           AND cg.is_active = true
           AND ay.is_active = true
           AND cur.status = 'ACTIVE'
@@ -58,7 +58,7 @@ export async function createStudentWithEnrollment(input: unknown): Promise<
       const [role] = await tx.$queryRaw<{ id: string }[]> `
         SELECT id
         FROM public.enrollment_curriculum_roles
-        WHERE code = \${roleCode}
+        WHERE code = ${roleCode}
           AND is_active = true
         LIMIT 1
       `;
@@ -67,9 +67,9 @@ export async function createStudentWithEnrollment(input: unknown): Promise<
       const [student] = await tx.$queryRaw<{ id: string }[]> `
         INSERT INTO public.students (school_id, full_name, birth_date)
         VALUES (
-          \${session.schoolId},
-          \${parsed.data.name},
-          \${parsed.data.birthDate}::date::timestamptz
+          ${session.schoolId},
+          ${parsed.data.name},
+          ${parsed.data.birthDate}::date::timestamptz
         )
         RETURNING id
       `;
@@ -84,10 +84,10 @@ export async function createStudentWithEnrollment(input: unknown): Promise<
           start_date
         )
         VALUES (
-          \${student.id},
-          \${session.schoolId},
-          \${classGroup.academic_year_id},
-          \${classGroup.id},
+          ${student.id},
+          ${session.schoolId},
+          ${classGroup.academic_year_id},
+          ${classGroup.id},
           'ACTIVE',
           now()
         )
@@ -103,9 +103,9 @@ export async function createStudentWithEnrollment(input: unknown): Promise<
           start_date
         )
         VALUES (
-          \${enrollment.id},
-          \${classGroup.curriculum_id},
-          \${role.id},
+          ${enrollment.id},
+          ${classGroup.curriculum_id},
+          ${role.id},
           'ACTIVE',
           now()
         )
